@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+    char text[] = "KXJEYUREBEZWEHEWRYTUHEYFSKREHEGOYFIWTTTUOLKSYCAJPOBOTEIZONTXBYBNTGONE YCUZWRGDSONSXBOUYWRHEBAAHYUSEDQ";
+    char key[] = "KENNEDY";
+    char m[5][5], used[26] = {0};
+    int i, j, k = 0;
+
+    used['J' - 'A'] = 1;
+
+    for (i = 0; key[i]; i++) {
+        char c = key[i];
+        if (c == 'J') c = 'I';
+        if (!used[c - 'A']) {
+            m[k / 5][k % 5] = c;
+            used[c - 'A'] = 1;
+            k++;
+        }
+    }
+
+    for (char c = 'A'; c <= 'Z'; c++) {
+        if (!used[c - 'A']) {
+            m[k / 5][k % 5] = c;
+            k++;
+        }
+    }
+
+    printf("Decrypted text: ");
+
+    for (i = 0; text[i] && text[i + 1]; i += 2) {
+        int r1, c1, r2, c2;
+
+        for (j = 0; j < 25; j++) {
+            if (m[j / 5][j % 5] == text[i]) {
+                r1 = j / 5; c1 = j % 5;
+            }
+            if (m[j / 5][j % 5] == text[i + 1]) {
+                r2 = j / 5; c2 = j % 5;
+            }
+        }
+
+        if (r1 == r2)
+            printf("%c%c", m[r1][(c1 + 4) % 5],
+                   m[r2][(c2 + 4) % 5]);
+        else if (c1 == c2)
+            printf("%c%c", m[(r1 + 4) % 5][c1],
+                   m[(r2 + 4) % 5][c2]);
+        else
+            printf("%c%c", m[r1][c2], m[r2][c1]);
+    }
+
+    printf("\n");
+    return 0;
+}
