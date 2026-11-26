@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+int main()
+{
+    char key[] = "MONARCHY";
+    char text[100];
+    char m[5][5];
+    int used[26] = {0}, k = 0;
+    used['J' - 'A'] = 1;
+    for (int i = 0; key[i]; i++) {
+        char c = toupper(key[i]);
+        if (!used[c - 'A']) {
+            m[k / 5][k % 5] = c;
+            used[c - 'A'] = 1;
+            k++;
+        }
+    }
+    for (char c = 'A'; c <= 'Z'; c++) {
+        if (!used[c - 'A']) {
+            m[k / 5][k % 5] = c;
+            k++;
+        }
+    }
+    printf("Enter plaintext: ");
+    scanf("%99s", text);
+
+    for (int i = 0; text[i]; i++)
+        text[i] = toupper(text[i]) == 'J' ? 'I' : toupper(text[i]);
+
+    int len = strlen(text);
+
+    if (len % 2 != 0) {
+        text[len++] = 'X';
+        text[len] = '\0';
+    }
+
+    printf("Encrypted text: ");
+
+    for (int i = 0; i < len; i += 2) {
+        int r1, c1, r2, c2;
+
+        for (int r = 0; r < 5; r++)
+            for (int c = 0; c < 5; c++) {
+                if (m[r][c] == text[i]) {
+                    r1 = r;
+                    c1 = c;
+                }
+                if (m[r][c] == text[i + 1]) {
+                    r2 = r;
+                    c2 = c;
+                }
+            }
+
+        if (r1 == r2)
+            printf("%c%c", m[r1][(c1 + 1) % 5],
+                   m[r2][(c2 + 1) % 5]);
+        else if (c1 == c2)
+            printf("%c%c", m[(r1 + 1) % 5][c1],
+                   m[(r2 + 1) % 5][c2]);
+        else
+            printf("%c%c", m[r1][c2], m[r2][c1]);
+    }
+
+    return 0;
+}
